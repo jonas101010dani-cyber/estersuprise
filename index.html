@@ -1,32 +1,150 @@
-<h1>🐣 መልካም ፋሲካ 🐰</h1>
+<!DOCTYPE html>
+<html lang="am">
+<head>
+  <meta charset="UTF-8">
+  <title>መልካም ፋሲካ 🐣</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #ffecd2, #fcb69f);
+      color: #333;
+      padding-top: 80px;
+    }
 
-<button onclick="showMessage()">🎁 ጠቅ አድርግ</button>
+    h1 {
+      font-size: 40px;
+    }
 
-<p id="message"></p>
+    button {
+      padding: 15px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background: #ff6f61;
+      color: white;
+      cursor: pointer;
+      margin: 10px;
+    }
 
-<!-- Popup -->
-<div id="popup" onclick="closePopup()">
-  <img src="your-image.jpg">
-</div>
+    button:hover {
+      background: #ff3b2f;
+    }
 
-<!-- Reactions -->
-<div class="reactions">
-  <p>React 😎👇</p>
-  <button onclick="react('😂')">😂</button>
-  <button onclick="react('❤️')">❤️</button>
-  <button onclick="react('🔥')">🔥</button>
-  <p id="reactionResult"></p>
-</div>
+    #message {
+      font-size: 22px;
+      margin-top: 20px;
+    }
 
-<!-- Private Message Form -->
-<div style="margin-top:40px;">
-  <h3>💌 Send me a private message</h3>
+    /* Popup Image */
+    #popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
 
-  <form action="https://formspree.io/f/yourID" method="POST">
-    <input type="text" name="name" placeholder="Your name 😎" required><br><br>
-    
-    <textarea name="message" placeholder="Write something nice 😁" required></textarea><br><br>
-    
-    <button type="submit">Send 💌</button>
-  </form>
-</div>
+    #popup img {
+      max-width: 300px;
+      border-radius: 20px;
+    }
+
+    /* Fireworks */
+    .firework {
+      position: fixed;
+      width: 5px;
+      height: 5px;
+      background: red;
+      border-radius: 50%;
+      animation: explode 1s ease-out forwards;
+    }
+
+    @keyframes explode {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(20); opacity: 0; }
+    }
+
+    /* Reactions */
+    .reactions {
+      margin-top: 30px;
+    }
+
+    /* Private message form */
+    form input, form textarea {
+      padding: 10px;
+      width: 250px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+
+    form textarea {
+      height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🐣 መልካም ፋሲካ 🐰</h1>
+
+  <button onclick="showMessage()">🎁 ጠቅ አድርግ</button>
+  <p id="message"></p>
+
+  <!-- Popup -->
+  <div id="popup" onclick="closePopup()">
+    <img src="your-image.jpg" alt="Easter Image">
+  </div>
+
+  <!-- Reactions -->
+  <div class="reactions">
+    <p>React 😎👇</p>
+    <button onclick="react('😂')">😂</button>
+    <button onclick="react('❤️')">❤️</button>
+    <button onclick="react('🔥')">🔥</button>
+    <p id="reactionResult"></p>
+  </div>
+
+  <!-- Private Message Form -->
+  <div style="margin-top:40px;">
+    <h3>💌 Send me a private message</h3>
+    <form action="https://formspree.io/f/yourID" method="POST">
+      <input type="text" name="name" placeholder="Your name 😎" required><br>
+      <textarea name="message" placeholder="Write something nice 😁" required></textarea><br>
+      <button type="submit">Send 💌</button>
+    </form>
+  </div>
+
+  <script>
+    function showMessage() {
+      document.getElementById("message").innerText =
+        "መልካም ፋሲካ 🌸🐰 ከውድ ጉዋደኛክ/ሽ ዮናስ 💛";
+
+      // Show popup
+      document.getElementById("popup").style.display = "flex";
+
+      // Fireworks
+      for (let i = 0; i < 10; i++) {
+        let fw = document.createElement("div");
+        fw.className = "firework";
+        fw.style.top = Math.random() * window.innerHeight + "px";
+        fw.style.left = Math.random() * window.innerWidth + "px";
+        document.body.appendChild(fw);
+        setTimeout(() => fw.remove(), 1000);
+      }
+    }
+
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
+    }
+
+    function react(emoji) {
+      document.getElementById("reactionResult").innerText =
+        "You reacted with " + emoji + " 😂🔥";
+    }
+  </script>
+</body>
+</html>
