@@ -1,172 +1,209 @@
 <!DOCTYPE html>
-<html lang="am">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>መልካም ፋሲካ 🐣</title>
+<title>Chaos Easter Game 🎮</title>
 
 <style>
-body {
-  text-align: center;
+body{
   font-family: Arial;
-  background: linear-gradient(to right, #ffecd2, #fcb69f);
-  padding-top: 60px;
+  text-align: center;
+  background: linear-gradient(135deg, #1e1e2f, #3a0ca3);
+  color: white;
 }
 
-h1 { font-size: 40px; }
-
-button {
-  padding: 12px 20px;
+button{
+  padding: 10px 20px;
+  margin: 10px;
   border: none;
   border-radius: 10px;
-  background: #ff6f61;
+  background: #7209b7;
   color: white;
+  font-size: 16px;
   cursor: pointer;
-  margin: 5px;
 }
 
-button:hover { background: #ff3b2f; }
-
-#popup {
-  display: none;
+#popup{
+  display:none;
   position: fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background: rgba(0,0,0,0.7);
-  justify-content:center;
-  align-items:center;
-}
-
-#popup img {
-  max-width: 300px;
-  border-radius: 15px;
-}
-
-.firework {
-  position: fixed;
-  width: 5px;
-  height: 5px;
-  background: red;
-  border-radius: 50%;
-  animation: explode 1s ease-out forwards;
-}
-
-@keyframes explode {
-  0% {transform: scale(1); opacity:1;}
-  100% {transform: scale(20); opacity:0;}
-}
-
-textarea, input {
-  width: 250px;
-  padding: 10px;
-  margin: 5px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#222;
+  padding:20px;
+  border-radius:15px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🐣 መልካም ፋሲካ 🐰</h1>
+<h1>እንኳን ለፋሲካ በሰላም አደረሳችሁ 🎉</h1>
 
-<button onclick="showMessage()">🎁 Open Surprise</button>
+<button onclick="openSurprise()">Open Surprise 🎁</button>
 
-<p id="message"></p>
-
-<!-- Popup -->
-<div id="popup" onclick="closePopup()">
-  <img src="your-Doro.jpg">
+<div id="emojiChoices" style="display:none;">
+  <button onclick="chooseEmoji('❤️')">❤️</button>
+  <button onclick="chooseEmoji('🔥')">🔥</button>
+  <button onclick="chooseEmoji('😂')">😂</button>
 </div>
 
-<!-- Reactions -->
-<h3>React 😎</h3>
-<button onclick="react('😂')">😂</button>
-<button onclick="react('❤️')">❤️</button>
-<button onclick="react('🔥')">🔥</button>
-<p id="reactText"></p>
+<div id="popup">
+  <h2>መልካም በአል 🎉</h2>
+  <p>my bestie from ዮና 💙</p>
 
-<hr>
+  <!-- MESSAGE BOX -->
+  <form id="introForm">
+    <input name="name" placeholder="Your Name" required><br><br>
+    <input name="gift" placeholder="Gift you want 🎁" required><br><br>
+    <textarea name="message" placeholder="Say something for me 💬"></textarea><br><br>
+    <button type="submit">Start Game 🎮</button>
+  </form>
 
-<!-- Mini Game -->
-<h2>🎮 Mini Game</h2>
-<p>Click 10 times to unlock gift 🎁</p>
-
-<button onclick="addScore()">Click me 😎</button>
-<p id="score">Score: 0</p>
-
-<div id="reward" style="display:none;">
-  <h3>🎉 You unlocked the gift!</h3>
-  <button onclick="openGift()">Open Gift 🎁</button>
-</div>
-
-<div id="gift" style="display:none;">
-  <h2>💌 Surprise Unlocked</h2>
-  <p>You’re officially awesome 😎🔥</p>
+  <button onclick="closePopup()">❌</button>
 </div>
 
 <hr>
 
-<!-- FINAL FORM -->
-<h2>💬 Say something nice about me 😎❤️😈</h2>
+<div id="game" style="display:none;">
+  <h2>Guess Number 🎮</h2>
 
-<form action="https://formspree.io/f/xgopjwva" method="POST">
+  <input id="guessInput" type="number">
+  <button onclick="checkGuess()">Guess</button>
 
-  <input type="text" name="name" placeholder="Your name 👤" required><br>
+  <p id="gameMsg"></p>
+  <p id="aiMsg"></p>
+  <p id="triesLeft"></p>
 
-  <textarea name="message" placeholder="Say something nice 💬" required></textarea><br>
-
-  <textarea name="gift_request" placeholder="What gift do you want? 🎁❤️😈" required></textarea><br>
-
-  <button type="submit">Send 💌</button>
-
-</form>
-
-<p id="thanks"></p>
+  <button onclick="restartGame()">🔄</button>
+  <button onclick="exitGame()">❌</button>
+</div>
 
 <script>
+document.addEventListener("DOMContentLoaded", function(){
 
-function showMessage(){
-  document.getElementById("message").innerText =
-  "መልካም ፋሲካ 🌸 from your friend 💛";
+let secret;
+let tries;
+let maxNumber = 10;
 
-  document.getElementById("popup").style.display = "flex";
+/* 🤖 AI */
+let aiLow;
+let aiHigh;
 
-  for(let i=0;i<10;i++){
-    let fw = document.createElement("div");
-    fw.className = "firework";
-    fw.style.top = Math.random()*window.innerHeight + "px";
-    fw.style.left = Math.random()*window.innerWidth + "px";
-    document.body.appendChild(fw);
+/* open */
+window.openSurprise = function(){
+  document.getElementById("emojiChoices").style.display = "block";
+}
 
-    setTimeout(()=>fw.remove(),1000);
+/* emoji */
+window.chooseEmoji = function(choice){
+  if(choice === "😂"){
+    alert("choose another 😂");
+    return;
   }
+  document.getElementById("popup").style.display = "block";
 }
 
-function closePopup(){
-  document.getElementById("popup").style.display="none";
+/* close */
+window.closePopup = function(){
+  document.getElementById("popup").style.display = "none";
 }
 
-function react(e){
-  document.getElementById("reactText").innerText =
-  "You reacted " + e;
+/* start */
+function startGame(){
+  document.getElementById("popup").style.display = "none";
+  document.getElementById("game").style.display = "block";
+
+  tries = 5;
+  secret = Math.floor(Math.random()*maxNumber)+1;
+
+  aiLow = 1;
+  aiHigh = maxNumber;
+
+  document.getElementById("gameMsg").innerText = "";
+  document.getElementById("aiMsg").innerText = "";
+  document.getElementById("triesLeft").innerText = "";
 }
 
-/* GAME */
-let score = 0;
+/* 🤖 AI */
+function aiTurn(){
+  let guess = Math.floor((aiLow + aiHigh)/2);
 
-function addScore(){
-  score++;
-  document.getElementById("score").innerText = "Score: " + score;
-
-  if(score >= 10){
-    document.getElementById("reward").style.display="block";
+  if(guess === secret){
+    document.getElementById("aiMsg").innerText =
+    "🤖 AI WON! (" + guess + ")";
+    return true;
   }
+
+  if(guess < secret) aiLow = guess + 1;
+  else aiHigh = guess - 1;
+
+  document.getElementById("aiMsg").innerText =
+  "🤖 AI guess: " + guess;
+
+  return false;
 }
 
-function openGift(){
-  document.getElementById("gift").style.display="block";
+/* guess */
+window.checkGuess = function(){
+  let guess = Number(document.getElementById("guessInput").value);
+
+  if(!guess) return;
+  if(tries <= 0) return;
+
+  if(guess === secret){
+    document.getElementById("gameMsg").innerText =
+    "🎉 YOU WON!";
+    return;
+  }
+
+  tries--;
+
+  if(aiTurn()) return;
+
+  if(tries === 0){
+    document.getElementById("gameMsg").innerText =
+    "💀 LOST! Number was " + secret;
+  }
+  else if(guess < secret){
+    document.getElementById("gameMsg").innerText = "📉 Too low";
+  }
+  else{
+    document.getElementById("gameMsg").innerText = "📈 Too high";
+  }
+
+  document.getElementById("triesLeft").innerText =
+  "Tries left: " + tries;
 }
 
+/* restart */
+window.restartGame = function(){
+  startGame();
+}
+
+/* exit */
+window.exitGame = function(){
+  document.getElementById("game").style.display = "none";
+}
+
+/* ✅ SEND FORM TO YOUR FORMSPREE */
+document.getElementById("introForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  fetch("https://formspree.io/f/xgopjwva", {
+    method: "POST",
+    body: new FormData(e.target),
+    headers: {
+      "Accept": "application/json"
+    }
+  });
+
+  alert("Message sent 💙");
+
+  startGame();
+});
+
+});
 </script>
 
 </body>
