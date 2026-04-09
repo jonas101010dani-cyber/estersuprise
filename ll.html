@@ -1,0 +1,32 @@
+<h1>🐣 መልካም ፋሲካ 🐰</h1>
+
+<button onclick="showMessage()">🎁 ጠቅ አድርግ</button>
+
+<p id="message"></p>
+
+<!-- Popup -->
+<div id="popup" onclick="closePopup()">
+  <img src="your-image.jpg">
+</div>
+
+<!-- Reactions -->
+<div class="reactions">
+  <p>React 😎👇</p>
+  <button onclick="react('😂')">😂</button>
+  <button onclick="react('❤️')">❤️</button>
+  <button onclick="react('🔥')">🔥</button>
+  <p id="reactionResult"></p>
+</div>
+
+<!-- Private Message Form -->
+<div style="margin-top:40px;">
+  <h3>💌 Send me a private message</h3>
+
+  <form action="https://formspree.io/f/yourID" method="POST">
+    <input type="text" name="name" placeholder="Your name 😎" required><br><br>
+    
+    <textarea name="message" placeholder="Write something nice 😁" required></textarea><br><br>
+    
+    <button type="submit">Send 💌</button>
+  </form>
+</div>
